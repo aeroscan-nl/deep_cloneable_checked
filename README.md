@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-Call the `deep_clone_checked` method as you would normally call the `deep_clone` method from [deep_cloeable](https://github.com/moiristo/deep_cloneable) with `:include` and add `:exclude` for any associations you do not want to clone.
+Call the `deep_clone_checked` method as you would normally call the `deep_clone` method from [deep_cloneable](https://github.com/moiristo/deep_cloneable) with `:include` and add `:exclude` for any associations you do not want to clone.
 
 ```ruby
 human = Animal::Human.create :name => 'Michael'
