@@ -16,8 +16,9 @@ module DeepCloneableChecked
         excludes = DeepCloneableChecked.options_to_hash(excludes)
         # puts "-----------\n klass: #{klass.name}, includes: #{includes.inspect}, excludes: #{excludes.inspect}"
         associations = klass.reflections
-  
+
         associations.map do |association_name, reflection|
+          next nil if reflection.is_a? ActiveRecord::Reflection::ThroughReflection
           next_excludes = excludes[association_name.to_sym]
           next_includes = includes[association_name.to_sym]
   

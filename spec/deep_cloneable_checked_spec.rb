@@ -28,11 +28,21 @@ RSpec.describe DeepCloneableChecked do
     expect_human_correctly_cloned @human.deep_clone_checked(:include => [{:ownerships => []}], :exclude => [:pigs, {:ownerships=>[:human, :chicken]}, :chickens])
   end
 
+  it "should raise an error if an associations is missing" do
+    expect do
+      deep_clone_human = @human.deep_clone_checked(:include => [], :exclude => [:chickens, :ownerships])
+    end.to raise_error(DeepCloneableChecked::MissingAssociationError, "Not all associations cloned: [:pigs]")
+  end
 
-
-  it "should raise an error if some associations are missing" do
+  it "should raise an error if a deeper association is missing" do
     expect do
       deep_clone_human = @human.deep_clone_checked(:include => :ownerships, :exclude => [:pigs, {:ownerships=>[:human]}, :chickens])
     end.to raise_error(DeepCloneableChecked::MissingAssociationError, "Not all associations cloned: [{:ownerships=>[:chicken]}]")
+  end
+
+  it "should not raise an error on indirect associations" do
+    expect do
+      deep_clone_human = @human.deep_clone_checked(:include => :ownerships, :exclude => [:pigs, {:ownerships=>[:human, :chicken]} ])
+    end.not_to raise_error
   end
 end
