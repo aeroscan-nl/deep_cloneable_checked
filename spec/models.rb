@@ -1,9 +1,9 @@
 module Animal
   class Human < ActiveRecord::Base
-    has_many :pigs
+    has_many :pigs, autosave: true
 
-    has_many :ownerships
-    has_many :chickens, :through => :ownerships
+    has_many :ownerships, autosave: true
+    has_many :chickens, through: :ownerships, autosave: true
   end
 
   class Pig < ActiveRecord::Base

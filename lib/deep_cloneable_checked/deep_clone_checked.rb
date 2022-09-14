@@ -1,3 +1,5 @@
+require 'set'
+
 module DeepCloneableChecked
   module DeepCloneChecked
     def deep_clone_checked(options)
@@ -11,10 +13,19 @@ module DeepCloneableChecked
     end
   
     def validate_clone_check(options)
+      checked = Set[]
+
       check_missing = lambda do |klass, includes, excludes|
         includes = DeepCloneableChecked.options_to_hash(includes)
         excludes = DeepCloneableChecked.options_to_hash(excludes)
         # puts "-----------\n klass: #{klass.name}, includes: #{includes.inspect}, excludes: #{excludes.inspect}"
+
+        # If we have already checked this class then we assume we don't
+        # clone it in a different manner. This assumption might not be valid
+        # but assuming otherwise would be complex and YAGNI (hopefully).
+        return nil if checked.include? klass
+
+        checked << klass
         associations = klass.reflections
 
         associations.map do |association_name, reflection|

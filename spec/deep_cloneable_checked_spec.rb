@@ -10,6 +10,8 @@ RSpec.describe DeepCloneableChecked do
     @chicken2 = Animal::Chicken.create :name => 'Chick2'
     @human.chickens << [@chicken1, @chicken2]
     @human2.chickens << [@chicken1, @chicken2]
+    @pig1 = Animal::Pig.create name: 'Pig1'
+    @human.pigs << @pig1
   end
 
 
@@ -17,6 +19,30 @@ RSpec.describe DeepCloneableChecked do
     expect(deep_clone_human).to be_new_record
     expect(deep_clone_human.save).to be_truthy
     expect(deep_clone_human.chickens.count).to eq(2)
+  end
+
+  def expect_human_fully_cloned(deep_clone_human)
+    deep_clone_human.save!
+    expect(deep_clone_human.id).not_to eq(@human.id)
+    chicken1 = deep_clone_human.chickens.find_by(name: 'Chick1')
+    expect(chicken1.id).not_to eq(@chicken1.id)
+    pig1 = deep_clone_human.pigs.find_by(name: 'Pig1')
+    expect(pig1.id).not_to eq(@pig1.id)
+    expect(pig1.human_id).to eq(deep_clone_human.id)
+    expect(chicken1.ownerships.count).to be(1)
+    expect(chicken1.humans.first.id).to eq(deep_clone_human.id)
+  end
+
+  it "should be able to fully clone a complex object" do
+    expect_human_fully_cloned @human.deep_clone_checked(
+      :include => {
+        pigs: [:human],
+        ownerships: [:chicken, :human] 
+      },
+      :exclude => [
+        ownerships: { chicken: [:planet, :ownerships] }
+      ]
+    )
   end
 
   it "should deep clone many_to_many associations" do

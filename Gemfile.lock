@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    deep_cloneable_checked (1.0.1)
+    deep_cloneable_checked (1.1.0)
       deep_cloneable (~> 3.2.0)
 
 GEM
